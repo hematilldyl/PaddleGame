@@ -11,7 +11,7 @@
 		var bricks = [];
 		var score = 0;
 		var lives = 3;
-		var level = 3;
+		var level = 1;
 		var scoreText;
 		var gameStarted = false;
 		const KEYCODE_LEFT = 37;

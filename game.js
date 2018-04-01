@@ -20,7 +20,7 @@
    	var keyboardMoveLeft = false;
    	var keyboardMoveRight = false;
    	var highScore = 0;
-
+		var scorePrev = 0;
 		function init(){
 			if(typeof(Storage) !== "undefined") {
 			    if(localStorage.highScore==undefined){
@@ -84,26 +84,40 @@
 				updateStatusLine();
 				if(score==7000){
 					level++;
+					scorePrev=score;
 					ball.xSpeed = 0;
 					ball.ySpeed = 0;
 					ball.x = paddle.x;
 					ball.y = paddle.y - PADDLE_HEIGHT/2 - BALL_RADIUS;
 					gameStarted = false;
-					reinitialize();
 					createBrickGrid(level);
 				}
 			}
 			if(level==2){
-				score+=points*2;
+				score+=points*level;
 				updateStatusLine();
-				if(score==21000){
+				if(score==7000*level+scorePrev){
+					scorePrev=score;
 					level++;
 					ball.xSpeed = 0;
 					ball.ySpeed = 0;
 					ball.x = paddle.x;
 					ball.y = paddle.y - PADDLE_HEIGHT/2 - BALL_RADIUS;
 					gameStarted = false;
-					reinitialize();
+					createBrickGrid(level);
+				}
+			}
+			if(level>2){
+				score+=points*level;
+				updateStatusLine();
+				if(score==7000*level+scorePrev){
+					scorePrev=score;
+					level++;
+					ball.xSpeed = 0;
+					ball.ySpeed = 0;
+					ball.x = paddle.x;
+					ball.y = paddle.y - PADDLE_HEIGHT/2 - BALL_RADIUS;
+					gameStarted = false;
 					createBrickGrid(level);
 				}
 			}
@@ -135,7 +149,7 @@
 		}
 		function loseLife(){
 			console.log("Lose A Life");
-			//lives--;
+			lives--;
 			ball.xSpeed = 0;
 			ball.ySpeed = 0;
 			ball.x = paddle.x;
@@ -288,14 +302,14 @@
 		}
 
 
-		function createBrickGrid(level){
+		function createBrickGrid(){
 			for(var i = 0;i<14;i++)
 				for(var j = 0;j<5;j++){
-					createBrick(i*(BRICKS_WIDTH+10)+40,j*(BRICKS_HEIGHT+5)+20,level);
+					createBrick(i*(BRICKS_WIDTH+10)+40,j*(BRICKS_HEIGHT+5)+20,i);
 				}
 		}
 
-		function createBrick(x,y,level){
+		function createBrick(x,y,i){
 			var brick = new createjs.Shape();
 			if(level==1){
 	        brick.graphics.beginFill('#581845');
@@ -311,6 +325,30 @@
 			}
 			if(level==2){
 					brick.graphics.beginFill('#F1C40F');
+					brick.graphics.drawRect(0, 0, BRICKS_WIDTH, BRICKS_HEIGHT);
+					brick.graphics.endFill();
+					brick.regX = BRICKS_WIDTH/2;
+					brick.regY = BRICKS_HEIGHT/2;
+					brick.x = x;
+					brick.y = y;
+					brick.setBounds(brick.regX,brick.regY,BRICKS_WIDTH,BRICKS_HEIGHT);
+					stage.addChild(brick);
+					bricks.push(brick);
+			}
+			if(level>2 && i%2==0){
+					brick.graphics.beginFill('#C70039');
+					brick.graphics.drawRect(0, 0, BRICKS_WIDTH, BRICKS_HEIGHT);
+					brick.graphics.endFill();
+					brick.regX = BRICKS_WIDTH/2;
+					brick.regY = BRICKS_HEIGHT/2;
+					brick.x = x;
+					brick.y = y;
+					brick.setBounds(brick.regX,brick.regY,BRICKS_WIDTH,BRICKS_HEIGHT);
+					stage.addChild(brick);
+					bricks.push(brick);
+			}
+			if(level>2 && i%2==1){
+					brick.graphics.beginFill('#2ECC71');
 					brick.graphics.drawRect(0, 0, BRICKS_WIDTH, BRICKS_HEIGHT);
 					brick.graphics.endFill();
 					brick.regX = BRICKS_WIDTH/2;
